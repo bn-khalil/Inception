@@ -1,0 +1,15 @@
+#!/bin/bash
+
+service mariadb start
+
+sleep 5
+
+mariadb -u root << EOF
+CREATE DATABASE IF NOT EXISTS $DB_NAME;
+ALTER USER 'root'@'localhost' IDENTIFIED BY $ROOT_PASSWORD;
+CREATE USER IF NOT EXISTS '$USER'@'%' IDENTIFIED BY $USER_PASSWORD;
+GRANT ALL PRIVILEGES NO $DB_NAME.* TO '$USER'@'%';
+FLUSH PRIVILEGES;
+EOF
+
+exec mysqld
