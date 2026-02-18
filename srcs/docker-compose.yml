@@ -1,0 +1,63 @@
+version: '3.8'
+
+networks:
+    Bnet:
+        driver: bridge
+
+volumes:
+    mariadb_data:
+        name: $DATABASE_VOL
+        driver_opts:
+            type: none
+            o: bind
+            device: /home/bn-bn/data/db
+    wordpress_data:
+        name: $WORDPRESS_VOL
+        driver_opts:
+            type: none
+            o: bind
+            device: /home/bn-bn/data/wordpress
+
+services:
+    nginx:
+        build: 
+            context : requirements/nginx
+            dockerfile: Dockerfile
+        container_name: server
+        ports:
+            - 443:443
+        env_file:
+            - .env
+        networks:
+            - Bnet
+        volumes:
+            - wordpress_data:/var/www/wordpress
+        depends_on:
+            - wordpress
+        restart: always
+    wordpress:
+        build: 
+            context : requirements/wordpress
+            dockerfile: Dockerfile
+        container_name: client
+        env_file:
+            - .env
+        networks:
+            - Bnet
+        volumes:
+            - wordpress_data:/var/www/wordpress
+        depends_on:
+            - mariadb
+        restart: always
+    mariadb:
+        build: 
+            context : requirements/mariadb
+            dockerfile: Dockerfile
+        container_name: database
+        env_file:
+            - .env
+        networks:
+            - Bnet
+        volumes:
+            - mariadb_data:/var/lib/mysql
+        restart: always
