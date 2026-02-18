@@ -6,12 +6,14 @@ networks:
 
 volumes:
     mariadb_data:
+        driver: local
         name: $DATABASE_VOL
         driver_opts:
             type: none
             o: bind
             device: /home/bn-bn/data/db
     wordpress_data:
+        driver: local
         name: $WORDPRESS_VOL
         driver_opts:
             type: none
@@ -20,10 +22,13 @@ volumes:
 
 services:
     nginx:
+        container_name: server
+        depends_on:
+            - wordpress
         build: 
             context : requirements/nginx
             dockerfile: Dockerfile
-        container_name: server
+        image: nginx:v1
         ports:
             - 443:443
         env_file:
@@ -32,28 +37,30 @@ services:
             - Bnet
         volumes:
             - wordpress_data:/var/www/wordpress
-        depends_on:
-            - wordpress
         restart: always
+
     wordpress:
+        container_name: client
+        depends_on:
+            - mariadb
         build: 
             context : requirements/wordpress
             dockerfile: Dockerfile
-        container_name: client
+        image: wordpress:v1
         env_file:
             - .env
         networks:
             - Bnet
         volumes:
             - wordpress_data:/var/www/wordpress
-        depends_on:
-            - mariadb
         restart: always
+
     mariadb:
+        container_name: database
         build: 
             context : requirements/mariadb
             dockerfile: Dockerfile
-        container_name: database
+        image: mariadb:v1
         env_file:
             - .env
         networks:

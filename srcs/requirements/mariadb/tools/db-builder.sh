@@ -1,33 +1,36 @@
 #!/bin/bash
 
-service mariadb start
+/etc/init.d/mariadb start
 
-sleep 5
+sleep 3
 
-if [ ! -d "/var/lib/mysql/$DB_NAME" ]; then
+if [ ! -d /var/lib/mysql/$DB_NAME ]; then
 
-    echo "Setupping wordpress database..."
+    echo "Setupping database..."
 
     mariadb -u root << EOF
 
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_ROOT_PASSWORD';
+    ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_ROOT_PASSWORD';
 
-CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_USER_PASSWORD';
+    CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_USER_PASSWORD';
 
-CREATE DATABASE IF NOT EXISTS $DB_NAME;
+    CREATE DATABASE IF NOT EXISTS $DB_NAME;
 
-GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';
+    GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';
 
-FLUSH PRIVILEGES;
+    FLUSH PRIVILEGES;
 
-SHUTDOWN;
+    SHUTDOWN;
 
 EOF
-    echo "Stoping mariadb..."
-    sleep 5
 
 else
+
     echo "Database already exists, restart service..."
+
+    mariadb -u root -p$DB_ROOT_PASSWORD -e "SHUTDOWN;"
 fi
+
+sleep 3
 
 exec mysqld_safe

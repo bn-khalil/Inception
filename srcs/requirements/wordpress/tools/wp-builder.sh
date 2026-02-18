@@ -1,11 +1,12 @@
 #!/bin/bash
 
 if [ ! -f wp-config.php ]; then
-    echo "start building wordpress..."
-    echo "start building wordpress..."
+
+    echo "      <-- Start wordPress configuration -->"
+
     wp core download --allow-root
 
-    sleep 3
+    echo "      <-- wordPress files downloaded -->" 
 
     wp config create              \
         --dbname="$DB_NAME"        \
@@ -13,7 +14,9 @@ if [ ! -f wp-config.php ]; then
         --dbhost="$DB_HOST"          \
         --dbpass="$DB_USER_PASSWORD"  \
         --allow-root
-    
+
+    echo "      <-- wp-config file created for database connection -->" 
+
     wp core install           \
         --url="$WP_DOMAIN"     \
         --title="$WP_TITLE"     \
@@ -23,12 +26,11 @@ if [ ! -f wp-config.php ]; then
         --skip-email                \
         --allow-root
 
-    wp theme install https://github.com/skat-tg/game-of-thrones/archive/refs/heads/master.zip --activate --allow-root
+    echo "--=-- Registration done -->" 
 
-    wp option update blogdescription "Winter is Coming... and wordpress is running." --allow-root
-
-    echo "instalation completed!"
-
+    echo "<-- WordPress configuration completed -->"
+else
+    echo "<-- WordPress is already configured -->"
 fi
 
 /usr/sbin/php-fpm8.2 -F
