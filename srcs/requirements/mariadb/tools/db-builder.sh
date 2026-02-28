@@ -2,7 +2,7 @@
 
 /etc/init.d/mariadb start
 
-sleep 3
+sleep 2
 
 if [ ! -d /var/lib/mysql/$DB_NAME ]; then
 

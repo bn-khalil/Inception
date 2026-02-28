@@ -6,14 +6,19 @@ if [ ! -f wp-config.php ]; then
 
     wp core download --allow-root
 
-    echo "      <-- wordPress files downloaded -->" 
+    echo "      <-- wordPress files downloaded -->"
+
+
+    sleep 5
+    echo "      <-- creating... wp-config file -->"
 
     wp config create              \
-        --dbname="$DB_NAME"        \
-        --dbuser="$DB_USER"         \
-        --dbhost="$DB_HOST"          \
-        --dbpass="$DB_USER_PASSWORD"  \
+        --dbname=${DB_NAME}        \
+        --dbuser=${DB_USER}         \
+        --dbhost=${DB_HOST}          \
+        --dbpass=${DB_USER_PASSWORD}  \
         --allow-root
+
 
     echo "      <-- wp-config file created for database connection -->" 
 
