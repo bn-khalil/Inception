@@ -6,6 +6,9 @@ sleep 2
 
 if [ ! -d /var/lib/mysql/$DB_NAME ]; then
 
+    DB_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
+    DB_USER_PASSWORD=$(cat /run/secrets/db_password)
+
     echo "Setupping database..."
 
     mariadb -u root << EOF

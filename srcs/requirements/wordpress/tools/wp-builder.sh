@@ -2,12 +2,12 @@
 
 if [ ! -f wp-config.php ]; then
 
+    WP_PASS=$(cat /run/secrets/wp_password)
+    DB_USER_PASSWORD=$(cat /run/secrets/db_password)
+
     echo "      <-- Start wordPress configuration -->"
 
     wp core download --allow-root
-
-    echo "      <-- wordPress files downloaded -->"
-
 
     sleep 5
     echo "      <-- creating... wp-config file -->"
@@ -18,9 +18,6 @@ if [ ! -f wp-config.php ]; then
         --dbhost=${DB_HOST}          \
         --dbpass=${DB_USER_PASSWORD}  \
         --allow-root
-
-
-    echo "      <-- wp-config file created for database connection -->" 
 
     wp core install           \
         --url="$WP_DOMAIN"     \
