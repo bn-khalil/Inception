@@ -10,6 +10,7 @@ secrets:
 
 networks:
     Bnet:
+        name: BNet
         driver: bridge
 
 volumes:
