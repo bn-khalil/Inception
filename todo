@@ -6,3 +6,26 @@
     "device": "/home/bn-bn/data",
     "o": "bind",
     "type": "none"
+
+1 - virtualization
+2 - containerisation
+3 - docker
+4 - docker engine
+5 - docker daemon
+6 - docker comunication system
+7 - docker specifications (oci)
+8 - docker images
+9 - docker network
+
+10 - nginx and nginx components
+11 - nginx server and config
+12 - cgi and fast cgi
+13 - TLS/ssl
+
+14 - database (mariadb)
+
+15 - wordpress
+
+16 - understanding scripts
+
+17 - docker compose
