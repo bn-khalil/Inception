@@ -1,0 +1,8 @@
+1 - entrypoint vs cmd
+2 - 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+3 - mount volumes and is mount a hard link
+
+"Options":
+    "device": "/home/bn-bn/data",
+    "o": "bind",
+    "type": "none"
