@@ -28,6 +28,9 @@ volumes:
             device: /home/bn-bn/data/wordpress
 
 services:
+
+    # mandatory services
+
     nginx:
         container_name: server
         depends_on:
@@ -80,4 +83,16 @@ services:
             - Bnet
         volumes:
             - mariadb_data:/var/lib/mysql
+        restart: always
+
+    # bonus services
+
+    redis:
+        container_name: redis
+        build:
+            context: requirements/bonus/redis
+            dockerfile: Dockerfile
+        image: redis:v1
+        networks:
+            - Bnet
         restart: always

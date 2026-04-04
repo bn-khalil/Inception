@@ -27,6 +27,16 @@ if [ ! -f wp-config.php ]; then
         --admin_password="$WP_PASS"\
         --skip-email                \
         --allow-root
+    
+    # redis settings
+    echo "      <-- redis caching configurations -->"
+
+    wp config set WP_CACHE true --raw --allow-root
+    wp config set WP_REDIS_HOST redis --allow-root
+    wp config set WP_REDIS_PORT 6379 --allow-root
+
+    wp plugin install redis-cache --activate --allow-root
+    wp redis enable --allow-root
 
     echo "--=-- Registration done -->" 
 
