@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [ ! -f wp-config.php ]; then
 
     WP_PASS=$(cat /run/secrets/wp_password)
@@ -9,7 +10,8 @@ if [ ! -f wp-config.php ]; then
 
     wp core download --allow-root
 
-    sleep 5
+    sleep 10
+
     echo "      <-- creating... wp-config file -->"
 
     wp config create              \
@@ -17,7 +19,7 @@ if [ ! -f wp-config.php ]; then
         --dbuser=${DB_USER}         \
         --dbhost=${DB_HOST}          \
         --dbpass=${DB_USER_PASSWORD}  \
-        --allow-root
+        --allow-root --force
 
     wp core install           \
         --url="$WP_DOMAIN"     \

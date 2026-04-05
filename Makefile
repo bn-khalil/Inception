@@ -30,7 +30,7 @@ clean: down
 	@echo "$(RED)Cleaning images...$(RST)"
 	@docker system prune -a -f
 
-fclean: clea
+fclean: clean
 	@echo "$(RED)Cleaning Data volumes...$(RST)"
 	@sudo rm -rf /home/bn-bn/data
 	@$(CMD) down -v

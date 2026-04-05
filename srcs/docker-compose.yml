@@ -123,14 +123,14 @@ services:
             - BNet
         restart: on-failure
 
-    glances:
-        container_name: glances
-        image: glances:v1
+    monitorix:
+        container_name: monitorix
+        image: monitorix:v1
         build:
-            context: requirements/bonus/glances
+            context: requirements/bonus/monitorix
             dockerfile: Dockerfile
         networks:
             - BNet
         ports:
-            - 61208:61208
+            - 82:8080
         restart: on-failure

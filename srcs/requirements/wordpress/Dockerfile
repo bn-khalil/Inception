@@ -2,7 +2,7 @@ FROM debian:12
 
 WORKDIR /var/www/wordpress
 
-RUN apt-get update && apt-get install -y curl php8.2 php8.2-fpm php8.2-mysql
+RUN apt-get update && apt-get install -y curl php8.2 php8.2-fpm php8.2-mysql mariadb-client
 
 RUN sed -i -e 's/listen =.*/listen = 9000/g' /etc/php/8.2/fpm/pool.d/www.conf
 
