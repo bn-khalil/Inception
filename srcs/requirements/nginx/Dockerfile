@@ -1,7 +1,9 @@
-FROM alpine:3.22
+FROM debian:12
 
-RUN apk update && apk add nginx
-RUN apk add openssl
+RUN apt-get update \
+    && apt-get -y install nginx
+
+RUN apt install openssl
 
 RUN mkdir -p /etc/nginx/ssl/private /etc/nginx/ssl/certs
 
@@ -10,7 +12,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -out /etc/nginx/ssl/certs/bn.crt \
     -subj "/C=MA/L=Khouribga/O=1337/CN=kben-tou.42.fr"
 
-COPY nginx.conf /etc/nginx/http.d
+COPY tools/nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN mkdir -p /run/nginx
 

@@ -7,7 +7,7 @@ secrets:
         file: ../secrets/wp_password.txt
 
 networks:
-    Bnet:
+    BNet:
         name: BNet
         driver: bridge
 
@@ -44,7 +44,7 @@ services:
         env_file:
             - .env
         networks:
-            - Bnet
+            - BNet
         volumes:
             - wordpress_data:/var/www/wordpress
         restart: on-failure
@@ -63,7 +63,7 @@ services:
             - db_password
             - wp_password
         networks:
-            - Bnet
+            - BNet
         volumes:
             - wordpress_data:/var/www/wordpress
         restart: on-failure
@@ -80,7 +80,7 @@ services:
             - db_password
             - db_root_password
         networks:
-            - Bnet
+            - BNet
         volumes:
             - mariadb_data:/var/lib/mysql
         restart: on-failure
@@ -94,7 +94,7 @@ services:
             context: requirements/bonus/redis
             dockerfile: Dockerfile
         networks:
-            - Bnet
+            - BNet
         restart: on-failure
     
     adminer:
@@ -108,8 +108,29 @@ services:
         ports:
             - 8080:8080
         networks:
-            - Bnet
+            - BNet
         restart: on-failure
 
+    website:
+        container_name: website
+        image: site:v1
+        build:
+            context: requirements/bonus/static
+            dockerfile: Dockerfile
+        ports:
+            - 81:80
+        networks:
+            - BNet
+        restart: on-failure
 
-    
+    glances:
+        container_name: glances
+        image: glances:v1
+        build:
+            context: requirements/bonus/glances
+            dockerfile: Dockerfile
+        networks:
+            - BNet
+        ports:
+            - 61208:61208
+        restart: on-failure
