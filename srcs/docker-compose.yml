@@ -32,7 +32,7 @@ services:
     # mandatory services
 
     nginx:
-        container_name: server
+        container_name: nginx
         depends_on:
             - wordpress
         build: 
@@ -47,10 +47,10 @@ services:
             - Bnet
         volumes:
             - wordpress_data:/var/www/wordpress
-        restart: always
+        restart: on-failure
 
     wordpress:
-        container_name: client
+        container_name: wordpress
         depends_on:
             - mariadb
         build: 
@@ -66,10 +66,10 @@ services:
             - Bnet
         volumes:
             - wordpress_data:/var/www/wordpress
-        restart: always
+        restart: on-failure
 
     mariadb:
-        container_name: database
+        container_name: mariadb
         build: 
             context : requirements/mariadb
             dockerfile: Dockerfile
@@ -83,16 +83,33 @@ services:
             - Bnet
         volumes:
             - mariadb_data:/var/lib/mysql
-        restart: always
+        restart: on-failure
 
     # bonus services
 
     redis:
         container_name: redis
+        image: redis:v1
         build:
             context: requirements/bonus/redis
             dockerfile: Dockerfile
-        image: redis:v1
         networks:
             - Bnet
-        restart: always
+        restart: on-failure
+    
+    adminer:
+        container_name: adminer
+        depends_on:
+            - mariadb
+        image: adminer:v1
+        build:
+            context: requirements/bonus/adminer
+            dockerfile: Dockerfile
+        ports:
+            - 8080:8080
+        networks:
+            - Bnet
+        restart: on-failure
+
+
+    
