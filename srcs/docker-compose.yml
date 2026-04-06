@@ -5,6 +5,8 @@ secrets:
         file: ../secrets/db_root_password.txt
     wp_password:
         file: ../secrets/wp_password.txt
+    ftp_password:
+        file: ../secrets/ftp_password.txt
 
 networks:
     BNet:
@@ -133,4 +135,23 @@ services:
             - BNet
         ports:
             - 3201:8080
+        restart: on-failure
+
+    ftp:
+        container_name: ftp
+        image: ftp:v1
+        build:
+            context: requirements/bonus/ftp
+            dockerfile: Dockerfile
+        networks:
+            - BNet
+        ports:
+            - 21:21
+            - 40000-40005:40000-40005
+        volumes:
+            - wordpress_data:/var/www/wordpress
+        secrets:
+            - ftp_password
+        env_file:
+            - .env
         restart: on-failure
