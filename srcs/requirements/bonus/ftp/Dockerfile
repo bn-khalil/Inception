@@ -10,4 +10,4 @@ COPY tools/initializer.sh /usr/local/bin/ftp-init.sh
 
 RUN chmod +x /usr/local/bin/ftp-init.sh
 
-ENTRYPOINT  ["/usr/local/bin/ftp-init.sh"]
+CMD  ["/usr/local/bin/ftp-init.sh"]

@@ -14,8 +14,6 @@ COPY tools/wp-builder.sh /usr/local/bin/wp-builder.sh
 
 RUN chmod +x /usr/local/bin/wp-builder.sh
 
-RUN mkdir -p /run/php
-
 EXPOSE 9000
 
-ENTRYPOINT ["/usr/local/bin/wp-builder.sh"]
+CMD ["/usr/local/bin/wp-builder.sh"]

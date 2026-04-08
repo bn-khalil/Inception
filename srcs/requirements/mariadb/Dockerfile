@@ -13,4 +13,4 @@ RUN sed -i 's/bind-address            = 127.0.0.1/bind-address            = 0.0.
 
 EXPOSE 3306
 
-ENTRYPOINT ["db-builder.sh"]
+CMD ["db-builder.sh"]
