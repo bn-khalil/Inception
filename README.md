@@ -1,71 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <p><i>This project has been created as part of the 42 curriculum by [bn-bn].</i></p>
+*This project has been created as part of the 42 curriculum by [bn-bn].*
 
-    <h1>📝 Project Description: The Inception Architecture</h1>
-    <p>
-        The <strong>Inception</strong> project is a rigorous system administration challenge focused on high-density virtualization. The goal is to build a secure, persistent, and modular infrastructure using <strong>Docker</strong> and <strong>Docker Compose</strong>. 
-        Unlike basic containerization, this project mandates building custom images from a clean <strong>Debian 12 (Bookworm)</strong> base, ensuring that every layer of the software stack is understood, configured, and optimized manually.
-    </p>
+## 📝 Description
+The ***Inception*** project is a high-level system administration challenge. The goal is to design a robust, multi-service infrastructure using Docker Compose. Unlike standard container usage, this project mandates building every image from a "clean" OS (Debian 12) to ensure a deep understanding of process isolation, networking, and storage persistence.
 
-    <h2>🏗️ Design Choices & Structure</h2>
-    <h3>Directory Structure Pertinence</h3>
-    <p>
-        The project is organized under a <code>srcs/</code> directory to strictly decouple the infrastructure's <strong>source code</strong> (Dockerfiles, configurations, scripts) from the <strong>orchestration</strong> (Makefile). 
-        This structure ensures that the build context is clean and that sensitive configuration files are isolated from the root of the repository.
-    </p>
+The architecture is built as a Microservices Mesh, where each service (Nginx, WordPress, MariaDB, Redis, FTP, Adminer) is isolated in its own environment with restricted privileges, communicating only through an encrypted and private internal network.
+---
 
-    <h3>Docker vs. Virtual Machines</h3>
-    <p>
-        While VMs virtualize the hardware layer (running a full kernel and emulating devices), <strong>Docker</strong> virtualizes the Operating System. It uses Linux <strong>Namespaces</strong> for isolation and <strong>Cgroups</strong> for resource management, sharing the host's kernel. 
-        The benefit is a sub-second boot time, significantly lower RAM overhead, and "write once, run anywhere" portability.
-    </p>
+### 🧠 Design Choices & Comparisons
 
-    <h3>Docker Image: With vs. Without Compose</h3>
-    <p>
-        Using a Docker image <strong>without Compose</strong> requires manual orchestration (manual network bridging, volume mounting, and environment injection via long CLI commands). 
-        <strong>Docker Compose</strong> provides a <strong>Declarative Workflow</strong>; it allows us to define the entire "desired state" of the infrastructure in a YAML file, handling service dependencies and internal DNS discovery automatically.
-    </p>
+1. Virtual Machines vs Docker (Kernel-Level Isolation)
+Virtual Machines: Virtualize the hardware layer. Each VM has its own Kernel, which leads to high overhead in RAM and CPU usage.
 
-    <h2>🛡️ Security & Technical Comparisons</h2>
-    <table border="1">
-        <tr>
-            <th>Feature</th>
-            <th>Technical Comparison</th>
-            <th>Implementation in Inception</th>
-        </tr>
-        <tr>
-            <td><strong>Secrets vs Env Variables</strong></td>
-            <td>Env variables are visible via <code>docker inspect</code> and process logs. Secrets are mounted as secure, temporary files.</td>
-            <td><strong>Docker Secrets</strong> were used for DB and FTP credentials to ensure sensitive data never leaks into the container environment.</td>
-        </tr>
-        <tr>
-            <td><strong>Docker Network vs Host</strong></td>
-            <td>Host network removes isolation. Bridge network creates a private subnet with an internal DNS.</td>
-            <td>A custom <strong>Bridge Network</strong> was created. No service (except Nginx) is exposed to the host, preventing direct attacks on MariaDB.</td>
-        </tr>
-        <tr>
-            <td><strong>Volumes vs Bind Mounts</strong></td>
-            <td>Volumes are Docker-managed. Bind Mounts are direct links to host paths.</td>
-            <td>A <strong>Hybrid Approach</strong>: Named volumes with <code>driver_opts (bind)</code> were used to meet the <code>/home/bn-bn/data</code> requirement while keeping volume initialization features.</td>
-        </tr>
-    </table>
+Docker: Virtualizes the Operating System layer. Containers share the Host Kernel but are isolated via Namespaces (for process/network visibility) and Cgroups (for resource limiting).
 
-    <h2>🚀 Instructions</h2>
-    <ol>
-        <li><strong>Host Setup:</strong> Map <code>127.0.0.1 bn-bn.42.fr</code> in your <code>/etc/hosts</code>.</li>
-        <li><strong>Build & Launch:</strong> Run <code>make all</code>. This automates directory creation and permissions.</li>
-        <li><strong>Verification:</strong> Access <code>https://bn-bn.42.fr</code>. HTTP (Port 80) is strictly blocked.</li>
-    </ol>
+Choice: Docker was used because it provides a "Production-grade" environment that is lightweight, portable, and boots in milliseconds, unlike the minutes required by a VM.
 
-    <h2>📚 Resources & AI Usage</h2>
-    <ul>
-        <li>Docker Documentation & Debian 12 Security Handbooks.</li>
-        <li><strong>AI Usage (Gemini):</strong> AI was used as a senior mentor to debug the <strong>FTP Passive Mode</strong> flow (handling ephemeral ports through the bridge), clarifying <strong>UnionFS Layering</strong> (Copy-on-Write), and optimizing the <strong>Makefile</strong> to prevent permission race conditions.</li>
-    </ul>
-</body>
-</html>
+2. Secrets vs Environment Variables (The Security Layer)
+Env Variables: These are often logged in clear text, visible via docker inspect, and can be inherited by child processes.
+
+Secrets: Secrets are stored outside the image and mounted as temporary files (often in a RAM disk /run/secrets/). They are only accessible to the specific service that needs them.
+
+Choice: I implemented Docker Secrets for DB passwords and FTP credentials to ensure that sensitive data never touches the disk in an unencrypted form or appears in the process environment.
+
+3. Docker Network vs Host Network (Network Topology)
+Host Network: The container shares the host's IP and port space directly, removing any network isolation.
+
+Docker Network (Bridge): Creates a virtual bridge (private subnet). Containers communicate using an Internal DNS provided by Docker.
+
+Choice: I used a custom Bridge Network to ensure that services like MariaDB are completely hidden from the outside world. Only Nginx (Port 443) and FTP (Passive Ports) are exposed, reducing the attack surface.
+
+4. Docker Volumes vs Bind Mounts (The Persistence Strategy)
+Bind Mounts: Direct mapping of a host path to a container path. Highly dependent on the host's file structure.
+
+Volumes: Managed by Docker, independent of the host directory structure, and provide better performance on non-Linux hosts.
+
+The Hybrid Choice: I utilized a Named Volume mapped via Bind Mount options. This meets the project's requirement for data to exist at /home/bn-bn/data while allowing Docker to manage the volume lifecycle. Crucially, this setup allows for Volume Initialization: Docker copies existing data from the image to the host folder on the first run, preventing MariaDB/WordPress from starting with empty directories.
+---
+
+## 🛠️ Detailed Service breakdown
+
+### 🛡️ NGINX
+Acts as the **TLS Termination Proxy**. It is the only service exposed to the host machine. It strictly handles HTTPS requests (Port 443), enforces SSL/TLS protocols, and forwards dynamic content requests to PHP-FPM using the FastCGI protocol.
+
+### 🐘 WordPress & PHP-FPM
+The dynamic core of the infrastructure. Unlike standard setups where PHP is an Apache module, we use **PHP-FPM** as a standalone service. This separation allows for better process management and resource allocation. It processes WordPress logic and communicates with MariaDB for data retrieval.
+
+### 🗄️ MariaDB
+The **Relational Database Management System (RDBMS)**. It ensures data integrity and persistence. In this architecture, MariaDB is isolated from the outside world and only accepts connections from the WordPress and Adminer containers within the private network.
+
+### ⚡ Redis (Bonus)
+A high-performance **In-memory data structure store**. It functions as an Object Cache for WordPress, drastically reducing the number of database queries by storing frequently accessed data in RAM, resulting in near-instant page loads.
+
+### 📁 vsftpd (Bonus)
+A **Secure FTP Server** that provides a dedicated gateway for file management. It allows administrators to upload or modify WordPress assets (themes/plugins) securely without needing direct shell access to the host or container.
+
+### 🔍 Adminer (Bonus)
+A **Minimalist Database Management tool**. It replaces bulky alternatives like phpMyAdmin with a single-file PHP script, offering a full GUI to manage MariaDB tables while keeping the container footprint extremely small.
+---
+
+## 🚀 Instructions
+1. **Prerequisites:** Linux, Docker, Docker Compose, and `make`.
+2. **Domain:** Add `127.0.0.1 bn-bn.42.fr` to `/etc/hosts`.
+3. **Execution:** Run `make all` at the root.
+
+---
+
+## 📚 Resources
+- [Docker Deep Dive by Nigel Poulton]
+- [Virtualization and Hypervisors](https://devanshagarwal121.medium.com/virtualization-and-hypervisors-9c4c8f4ab27d)
+- [Docker](https://www.sysdig.com/learn-cloud-native/docker-101-the-docker-components)
+- [Docker](https://notes.kodekloud.com/docs/Docker-Certified-Associate-Exam-Course/Introduction/Course-Introduction/page)
+
+### 🤖 AI Usage Disclosure
