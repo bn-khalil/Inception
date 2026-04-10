@@ -31,7 +31,7 @@ if [ ! -f wp-config.php ]; then
         --allow-root
     
     # redis settings
-    echo "      <-- redis caching configurations -->"
+    echo "      <-- WordPress configuration completed! -->"
 
     wp config set WP_CACHE true --raw --allow-root
     wp config set WP_REDIS_HOST redis --allow-root
@@ -40,11 +40,9 @@ if [ ! -f wp-config.php ]; then
     wp plugin install redis-cache --activate --allow-root
     wp redis enable --allow-root
 
-    echo "--=-- Registration done -->" 
-
-    echo "<-- WordPress configuration completed -->"
+    echo "      <-- redis caching configurations completed! -->"
 else
-    echo "<-- WordPress is already configured -->"
+    echo "      <-- WordPress is already configured! -->"
 fi
 
 /usr/sbin/php-fpm8.2 -F

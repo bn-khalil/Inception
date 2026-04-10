@@ -10,20 +10,17 @@ secrets:
 
 networks:
     BNet:
-        name: BNet
         driver: bridge
 
 volumes:
-    mariadb_data:
+    mariadb_vol:
         driver: local
-        name: $DATABASE_VOL
         driver_opts:
             type: none
             o: bind
             device: /home/bn-bn/data/db
-    wordpress_data:
+    wordpress_vol:
         driver: local
-        name: $WORDPRESS_VOL
         driver_opts:
             type: none
             o: bind
@@ -48,7 +45,7 @@ services:
         networks:
             - BNet
         volumes:
-            - wordpress_data:/var/www/wordpress
+            - wordpress_vol:/var/www/wordpress
         restart: on-failure
 
     wordpress:
@@ -67,7 +64,7 @@ services:
         networks:
             - BNet
         volumes:
-            - wordpress_data:/var/www/wordpress
+            - wordpress_vol:/var/www/wordpress
         restart: on-failure
 
     mariadb:
@@ -84,7 +81,7 @@ services:
         networks:
             - BNet
         volumes:
-            - mariadb_data:/var/lib/mysql
+            - mariadb_vol:/var/lib/mysql
         restart: on-failure
 
     # bonus services
@@ -149,7 +146,7 @@ services:
             - 21:21
             - 40000-40005:40000-40005
         volumes:
-            - wordpress_data:/var/www/wordpress
+            - wordpress_vol:/var/www/wordpress
         secrets:
             - ftp_password
         env_file:

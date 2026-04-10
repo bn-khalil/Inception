@@ -3,11 +3,15 @@
 DB_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 DB_USER_PASSWORD=$(cat /run/secrets/db_password)
 
-/etc/init.d/mariadb start
-
-sleep 5
 
 if [ ! -d /var/lib/mysql/$DB_NAME ]; then
+
+
+    echo "Stating mariadb server..."
+    
+    /etc/init.d/mariadb start
+
+    sleep 5
 
     echo "Setupping database..."
 
@@ -25,12 +29,12 @@ if [ ! -d /var/lib/mysql/$DB_NAME ]; then
 
 EOF
 
+    mariadb -u root -p$DB_ROOT_PASSWORD -e "SHUTDOWN;"
+
+    sleep 5
+
 else
     echo "Database already exists, restart service..."
 fi
 
-mariadb -u root -p$DB_ROOT_PASSWORD -e "SHUTDOWN;"
-
-sleep 5
-
-exec mysqld_safe
+exec mysqld --user=mysql --console
