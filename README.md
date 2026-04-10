@@ -1,36 +1,71 @@
-*This project has been created as part of the 42 curriculum by [bn-bn].*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <p><i>This project has been created as part of the 42 curriculum by [bn-bn].</i></p>
 
-## 📝 Description
-The **Inception** project is a comprehensive exercise in system administration and infrastructure virtualization. The core objective is to manually build a small, secure, and persistent infrastructure using **Docker**. Unlike simple containerization, this project requires building custom images from scratch (using Debian 12) and orchestrating them via **Docker Compose**.
+    <h1>📝 Project Description: The Inception Architecture</h1>
+    <p>
+        The <strong>Inception</strong> project is a rigorous system administration challenge focused on high-density virtualization. The goal is to build a secure, persistent, and modular infrastructure using <strong>Docker</strong> and <strong>Docker Compose</strong>. 
+        Unlike basic containerization, this project mandates building custom images from a clean <strong>Debian 12 (Bookworm)</strong> base, ensuring that every layer of the software stack is understood, configured, and optimized manually.
+    </p>
 
-### 🏗️ Project Overview
-This infrastructure follows a microservices architecture:
-- **NGINX:** The entry point using TLS v1.2/v1.3.
-- **WordPress + PHP-FPM:** The application layer.
-- **MariaDB:** The relational database.
-- **Bonus:** Redis (cache), vsftpd (FTP), and Adminer (DB management).
+    <h2>🏗️ Design Choices & Structure</h2>
+    <h3>Directory Structure Pertinence</h3>
+    <p>
+        The project is organized under a <code>srcs/</code> directory to strictly decouple the infrastructure's <strong>source code</strong> (Dockerfiles, configurations, scripts) from the <strong>orchestration</strong> (Makefile). 
+        This structure ensures that the build context is clean and that sensitive configuration files are isolated from the root of the repository.
+    </p>
 
-### 🧠 Design Choices & Comparisons
+    <h3>Docker vs. Virtual Machines</h3>
+    <p>
+        While VMs virtualize the hardware layer (running a full kernel and emulating devices), <strong>Docker</strong> virtualizes the Operating System. It uses Linux <strong>Namespaces</strong> for isolation and <strong>Cgroups</strong> for resource management, sharing the host's kernel. 
+        The benefit is a sub-second boot time, significantly lower RAM overhead, and "write once, run anywhere" portability.
+    </p>
 
-| Feature | Comparison | My Choice & Reason |
-| :--- | :--- | :--- |
-| **VM vs Docker** | VMs virtualize hardware (heavy). Docker virtualizes the kernel (light). | **Docker** for its "Infrastructure as Code" approach and efficiency. |
-| **Secrets vs Env** | Env variables are visible in inspect. Secrets are stored in files. | **Secrets** were used for sensitive passwords to ensure security. |
-| **Network vs Host** | Host uses local IP. Network uses an isolated bridge. | **Docker Network** for service isolation and internal DNS resolution. |
-| **Volumes vs Bind** | Volumes are Docker-managed. Bind Mounts map host paths. | **Hybrid Method** to meet the `/home/bn-bn/data` requirement. |
+    <h3>Docker Image: With vs. Without Compose</h3>
+    <p>
+        Using a Docker image <strong>without Compose</strong> requires manual orchestration (manual network bridging, volume mounting, and environment injection via long CLI commands). 
+        <strong>Docker Compose</strong> provides a <strong>Declarative Workflow</strong>; it allows us to define the entire "desired state" of the infrastructure in a YAML file, handling service dependencies and internal DNS discovery automatically.
+    </p>
 
----
+    <h2>🛡️ Security & Technical Comparisons</h2>
+    <table border="1">
+        <tr>
+            <th>Feature</th>
+            <th>Technical Comparison</th>
+            <th>Implementation in Inception</th>
+        </tr>
+        <tr>
+            <td><strong>Secrets vs Env Variables</strong></td>
+            <td>Env variables are visible via <code>docker inspect</code> and process logs. Secrets are mounted as secure, temporary files.</td>
+            <td><strong>Docker Secrets</strong> were used for DB and FTP credentials to ensure sensitive data never leaks into the container environment.</td>
+        </tr>
+        <tr>
+            <td><strong>Docker Network vs Host</strong></td>
+            <td>Host network removes isolation. Bridge network creates a private subnet with an internal DNS.</td>
+            <td>A custom <strong>Bridge Network</strong> was created. No service (except Nginx) is exposed to the host, preventing direct attacks on MariaDB.</td>
+        </tr>
+        <tr>
+            <td><strong>Volumes vs Bind Mounts</strong></td>
+            <td>Volumes are Docker-managed. Bind Mounts are direct links to host paths.</td>
+            <td>A <strong>Hybrid Approach</strong>: Named volumes with <code>driver_opts (bind)</code> were used to meet the <code>/home/bn-bn/data</code> requirement while keeping volume initialization features.</td>
+        </tr>
+    </table>
 
-## 🚀 Instructions
-1. **Prerequisites:** Linux, Docker, Docker Compose, and `make`.
-2. **Domain:** Add `127.0.0.1 bn-bn.42.fr` to `/etc/hosts`.
-3. **Execution:** Run `make all` at the root.
+    <h2>🚀 Instructions</h2>
+    <ol>
+        <li><strong>Host Setup:</strong> Map <code>127.0.0.1 bn-bn.42.fr</code> in your <code>/etc/hosts</code>.</li>
+        <li><strong>Build & Launch:</strong> Run <code>make all</code>. This automates directory creation and permissions.</li>
+        <li><strong>Verification:</strong> Access <code>https://bn-bn.42.fr</code>. HTTP (Port 80) is strictly blocked.</li>
+    </ol>
 
----
-
-## 📚 Resources
-- [Docker Documentation](https://docs.docker.com/)
-- [Understanding FTP Passive Mode](http://slacksite.com/other/ftp.html)
-
-### 🤖 AI Usage Disclosure
-AI (Gemini) acted as a technical mentor for troubleshooting **vsftpd Passive Mode** flow, explaining the **Copy-on-Write** mechanism in Docker Layers, and optimizing the **Makefile** permission logic.
+    <h2>📚 Resources & AI Usage</h2>
+    <ul>
+        <li>Docker Documentation & Debian 12 Security Handbooks.</li>
+        <li><strong>AI Usage (Gemini):</strong> AI was used as a senior mentor to debug the <strong>FTP Passive Mode</strong> flow (handling ephemeral ports through the bridge), clarifying <strong>UnionFS Layering</strong> (Copy-on-Write), and optimizing the <strong>Makefile</strong> to prevent permission race conditions.</li>
+    </ul>
+</body>
+</html>
