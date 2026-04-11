@@ -34,10 +34,8 @@ services:
         container_name: nginx
         depends_on:
             - wordpress
-        build: 
-            context : requirements/nginx
-            dockerfile: Dockerfile
-        image: nginx:v1
+        build: requirements/nginx
+        image: nginx
         ports:
             - 443:443
         env_file:
@@ -52,10 +50,8 @@ services:
         container_name: wordpress
         depends_on:
             - mariadb
-        build: 
-            context : requirements/wordpress
-            dockerfile: Dockerfile
-        image: wordpress:v1
+        build: requirements/wordpress
+        image: wordpress
         env_file:
             - .env
         secrets:
@@ -69,10 +65,8 @@ services:
 
     mariadb:
         container_name: mariadb
-        build: 
-            context : requirements/mariadb
-            dockerfile: Dockerfile
-        image: mariadb:v1
+        build: requirements/mariadb
+        image: mariadb
         env_file:
             - .env
         secrets:
@@ -88,10 +82,8 @@ services:
 
     redis:
         container_name: redis
-        image: redis:v1
-        build:
-            context: requirements/bonus/redis
-            dockerfile: Dockerfile
+        image: redis
+        build: requirements/bonus/redis
         networks:
             - BNet
         restart: on-failure
@@ -100,10 +92,8 @@ services:
         container_name: adminer
         depends_on:
             - mariadb
-        image: adminer:v1
-        build:
-            context: requirements/bonus/adminer
-            dockerfile: Dockerfile
+        image: adminer
+        build: requirements/bonus/adminer
         ports:
             - 8080:8080
         networks:
@@ -112,34 +102,30 @@ services:
 
     website:
         container_name: website
-        image: site:v1
-        build:
-            context: requirements/bonus/static
-            dockerfile: Dockerfile
+        image: site
+        build: requirements/bonus/static
         ports:
             - 81:80
         networks:
             - BNet
         restart: on-failure
 
-    monitorix:
-        container_name: monitorix
-        image: monitorix:v1
-        build:
-            context: requirements/bonus/monitorix
-            dockerfile: Dockerfile
+    file-browser:
+        container_name: file-browser
+        build: requirements/bonus/file-browser
+        image: file-browser
+        restart: on-failure
+        volumes:
+            - wordpress_vol:/data/wordpress
+            - mariadb_vol:/data/mariadb
         networks:
             - BNet
         ports:
-            - 3201:8080
-        restart: on-failure
-
+            - "3201:8080"
     ftp:
         container_name: ftp
-        image: ftp:v1
-        build:
-            context: requirements/bonus/ftp
-            dockerfile: Dockerfile
+        image: ftp
+        build: requirements/bonus/ftp
         networks:
             - BNet
         ports:

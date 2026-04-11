@@ -2,8 +2,7 @@
 
 ## 📝 Description
 The ***Inception*** project is a high-level system administration challenge. The goal is to design a robust, multi-service infrastructure using Docker Compose. Unlike standard container usage, this project mandates building every image from a "clean" OS (Debian 12) to ensure a deep understanding of process isolation, networking, and storage persistence.
-
-The architecture is built as a Microservices Mesh, where each service (Nginx, WordPress, MariaDB, Redis, FTP, Adminer) is isolated in its own environment with restricted privileges, communicating only through an encrypted and private internal network.
+the architecture is built as a Microservices Mesh, where each service (Nginx, WordPress, MariaDB, Redis, FTP, Adminer) is isolated in its own environment with restricted privileges, communicating only through an encrypted and private internal network.
 ---
 
 ### 🧠 Design Choices & Comparisons
@@ -33,8 +32,6 @@ Choice: I used a custom Bridge Network to ensure that services like MariaDB are 
 Bind Mounts: Direct mapping of a host path to a container path. Highly dependent on the host's file structure.
 
 Volumes: Managed by Docker, independent of the host directory structure, and provide better performance on non-Linux hosts.
-
-The Hybrid Choice: I utilized a Named Volume mapped via Bind Mount options. This meets the project's requirement for data to exist at /home/bn-bn/data while allowing Docker to manage the volume lifecycle. Crucially, this setup allows for Volume Initialization: Docker copies existing data from the image to the host folder on the first run, preventing MariaDB/WordPress from starting with empty directories.
 ---
 
 ## 🛠️ Detailed Service breakdown
@@ -67,8 +64,7 @@ A **Minimalist Database Management tool**. It replaces bulky alternatives like p
 
 ## 📚 Resources
 - [Docker Deep Dive by Nigel Poulton]
-- [Virtualization and Hypervisors](https://devanshagarwal121.medium.com/virtualization-and-hypervisors-9c4c8f4ab27d)
-- [Docker](https://www.sysdig.com/learn-cloud-native/docker-101-the-docker-components)
-- [Docker](https://notes.kodekloud.com/docs/Docker-Certified-Associate-Exam-Course/Introduction/Course-Introduction/page)
+- [The Docker Components](https://www.sysdig.com/learn-cloud-native/docker-101-the-docker-components)
+- [docker Tutorial](https://notes.kodekloud.com/docs/Docker-Certified-Associate-Exam-Course/Introduction/Course-Introduction/page)
 
 ### 🤖 AI Usage Disclosure
