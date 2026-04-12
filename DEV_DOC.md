@@ -1,33 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
-    <h1>👨‍💻 DEVELOPER DOCUMENTATION</h1>
+# 🛠️ Developer Documentation - Inception Internal
 
-    <h2>⚙️ Environment Setup</h2>
-    <p>To replicate this environment from scratch:</p>
-    <ul>
-        <li>Ensure <code>docker</code> and <code>docker-compose-plugin</code> are installed.</li>
-        <li>Place your <code>.env</code> file in <code>srcs/</code> and password files in <code>srcs/secrets/</code>.</li>
-        <li>Run <code>make</code>: The Makefile will execute <code>mkdir -p</code> for <code>/home/bn-bn/data/db</code> and <code>/home/bn-bn/data/wordpress</code> before launching.</li>
-    </ul>
+This document provides the technical instructions for developers to set up, build, and maintain the **Inception** infrastructure.
 
-    <h2>🛠️ Makefile & Docker Compose Logic</h2>
-    <p>
-        The <strong>Makefile</strong> handles the orchestration lifecycle. It uses the <code>--env-file</code> flag to ensure consistent variable injection. 
-        Images are named exactly as their services (e.g., <code>mariadb:latest</code>) and are built using <strong>BuildKit</strong> for optimized layering.
-    </p>
+---
 
-    <h2>💾 Data Persistence & Storage</h2>
-    <p>
-        Data persistence is achieved through <strong>Bind Mounts</strong> mapped to <code>/home/bn-bn/data/</code>. 
-        This path is chosen to survive container deletion and VM reboots. Even after a <code>docker compose down</code>, the MariaDB tables and WordPress uploads remain intact on the host disk.
-    </p>
+## ⚙️ 1. Environment Setup
 
-    <h2>🔍 Debugging Commands</h2>
-    <ul>
-        <li><strong>Check Network Isolation:</strong> <code>docker network inspect srcs_inception_network</code>.</li>
-        <li><strong>Check Volume Path:</strong> <code>docker volume inspect wordpress_data</code>.</li>
-        <li><strong>Logs:</strong> <code>docker compose -f srcs/docker-compose.yml logs -f</code>.</li>
-    </ul>
-</body>
-</html>
+Before building the stack, the host environment must be configured to meet the project's networking and security requirements.
+
+### Prerequisites
+| Requirement | Specification |
+| :--- | :--- |
+| **Operating System** | Debian 12 (Bookworm) or a compatible Linux distribution |
+| **Orchestrator** | Docker Engine & Docker Compose Plugin |
+| **Build Tool** | GNU Make |
+| **Permissions** | Sudo/Root privileges for volume creation and networking |
+
+### Step 1: Domain Mapping
+The infrastructure relies on a specific local domain. Map it in your host's `/etc/hosts` file:
+```bash
+127.0.0.1 kben-tou.42.fr
+```
+
+### Step 2: Configuration Files (.env)
+Create a `.env` file in the `srcs/` directory with the following structure:
+
+- `DB_NAME` — database name
+- `DB_USER` — database username
+- `WP_ADMIN` — WordPress admin login
+- `WP_EMAIL` — WordPress admin email
+- `FTP_USER` — FTP login username
+
+### Step 3: Secrets Initialization
+To ensure security, sensitive passwords must be stored as plain text files within the `./secrets/` directory at the project root. Create the following files:
+* `secrets/db_password.txt`
+* `secrets/db_root_password.txt`
+* `secrets/wp_password.txt`
+* `secrets/ftp_password.txt`
+
+---
+
+## 🏗️ 2. Build and Launch
+
+The project lifecycle is managed entirely through a **Makefile** that orchestrates the `docker-compose.yml` file.
+
+| Command | Action |
+| :--- | :--- |
+| **make** | Builds the Docker images from the `Dockerfiles` and starts all containers. |
+| **make down** | Stops and removes containers while keeping the data volumes. |
+| **make start** | Start all stoped containers. |
+| **make stop** | Stop all running containers. |
+| **make re** | Forces a full rebuild of the infrastructure. |
+| **make fclean** | **Danger:** Removes all containers, networks, images, and **permanently deletes volumes**. |
+
+---
+
+## 📦 3. Container & Volume Management
+
+Developers can use the following commands to inspect or debug the microservices mesh.
+
+### Status Verification
+Check the health and uptime of all microservices:
+```bash
+docker ps
+```
+
+### Shell Access
+To enter a container's isolated environment:
+```bash
+docker exec -it <container_name> /bin/bash
+```
+
+### Volume Inspection
+To verify that Docker is correctly managing the persistence layer:
+```bash
+docker volume ls
+docker volume inspect <volume_name>
+```
+
+---
+
+## 💾 4. Data Storage & Persistence
+
+Data persistence is handled via **Bind Mounts**, ensuring that information survives container destruction and is easily accessible for backups on the host.
+
+### Persistence Logic
+| Service | Data Type | Host Path |
+| :--- | :--- | :--- |
+| **MariaDB** | SQL Database Files | `/home/bn-bn/data/mariadb` |
+| **WordPress** | Website Files & Media | `/home/bn-bn/data/wordpress` |

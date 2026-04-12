@@ -94,8 +94,6 @@ services:
             - mariadb
         image: adminer
         build: requirements/bonus/adminer
-        ports:
-            - 8080:8080
         networks:
             - BNet
         restart: on-failure
@@ -104,24 +102,24 @@ services:
         container_name: website
         image: site
         build: requirements/bonus/static
-        ports:
-            - 81:80
         networks:
             - BNet
         restart: on-failure
 
-    file-browser:
-        container_name: file-browser
-        build: requirements/bonus/file-browser
-        image: file-browser
+    cadvisor:
+        container_name: cadvisor
+        build: requirements/bonus/cadvisor
+        image: cadvisor
         restart: on-failure
         volumes:
-            - wordpress_vol:/data/wordpress
-            - mariadb_vol:/data/mariadb
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+            - /dev/disk/:/dev/disk:ro
         networks:
             - BNet
-        ports:
-            - "3201:8080"
+
     ftp:
         container_name: ftp
         image: ftp

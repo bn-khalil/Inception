@@ -1,34 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
-    <h1>👤 USER DOCUMENTATION</h1>
-    
-    <h2>🌐 Provided Services</h2>
-    <p>The stack provides a full LEMP environment:</p>
-    <ul>
-        <li><strong>WordPress:</strong> High-performance CMS running on PHP-FPM.</li>
-        <li><strong>Nginx:</strong> Secure entry point via Port 443 (TLS 1.3).</li>
-        <li><strong>MariaDB:</strong> Optimized SQL database.</li>
-        <li><strong>Bonuses:</strong> Redis (Cache), Adminer (DB UI), and vsftpd (FTP Access).</li>
-    </ul>
+# 📖 Inception - User & System Documentation
+*Administrator's Guide to the kben-tou.42.fr Infrastructure*
 
-    <h2>🚦 Operational Commands</h2>
-    <p>All operations are handled via the root Makefile:</p>
-    <ul>
-        <li><code>make</code>: Start the entire infrastructure.</li>
-        <li><code>make stop</code>: Gracefully stop all services.</li>
-        <li><code>make fclean</code>: Complete reset (Deletes containers, images, and <strong>all physical data</strong>).</li>
-    </ul>
+## 📋 1. Infrastructure Overview
+This document provides the necessary instructions to manage and access the **Inception** multi-container environment. The stack is built on **Debian 12** and orchestrated via **Docker Compose**, ensuring high availability and service isolation.
 
-    <h2>🔑 Credentials & Access</h2>
-    <ul>
-        <li><strong>Website:</strong> <a href="https://bn-bn.42.fr">https://bn-bn.42.fr</a></li>
-        <li><strong>WordPress Admin:</strong> Access via <code>/wp-admin</code>. Admin user is unique (non-default name).</li>
-        <li><strong>Database Management:</strong> Use <strong>Adminer</strong> via the specified port/route.</li>
-        <li><strong>Credential Storage:</strong> All passwords are located in <code>srcs/secrets/</code> and injected at runtime.</li>
-    </ul>
+### 🛠️ Service Catalog
+| Service | Role | Access Point |
+| :--- | :--- | :--- |
+| **NGINX** | Secure Reverse Proxy (TLS 1.3) | `https://kben-tou.42.fr` |
+| **WordPress** | Content Management System (PHP-FPM) | `https://kben-tou.42.fr` |
+| **Adminer** | Database Management GUI | `https://kben-tou.42.fr/adminer` |
+| **Static Site** | Landing Page | `https://kben-tou.42.fr/static` |
+| **cAdvisor** | Container Metrics & Monitoring | `https://kben-tou.42.fr/cadvisor` |
+| **FTP Server** | Secure File Management (vsftpd) | `ftp://kben-tou.42.fr:21` |
+| **Redis** | In-memory Object Cache | *(Internal Service)* |
+| **MariaDB** | Relational Database Engine | *(Internal Service)* |
 
-    <h2>✅ Health Verification</h2>
-    <p>Run <code>docker ps</code>. All services must show <strong>(healthy)</strong> or <strong>Up</strong>. Ensure that <code>https://bn-bn.42.fr</code> displays the configured site, not the installation page.</p>
-</body>
-</html>
+## ⚙️ 2. Administrative Management
+All infrastructure operations are centralized through the **Makefile** located at the root of the repository.
+
+### 🚀 Deployment
+To build images and initialize the stack in detached mode:
+```bash
+make build
+```
+
+### 🛑 Termination
+To stop all services and remove active containers while preserving data:
+```bash
+make down
+```
+
+### 🛑 🧹 Deep Clean (Reset)
+To wipe all containers, networks, and permanently delete volumes:
+```bash
+make fclean
+```
+
+## 🌐 3. Accessing the Application
+
+The infrastructure exposes services through a secure gateway. Use the following table to access the different parts of the stack:
+
+| Service | Role | Access Point |
+| :--- | :--- | :--- |
+| **WordPress** | Main CMS Public Site | `https://bn-bn.42.fr` |
+| **WP-Admin** | WordPress Administration Panel | `https://bn-bn.42.fr/wp-admin` |
+| **Adminer** | Database Management GUI | `http://kben-tou.42.fr:8080` |
+| **static site** | static site with landing page | `http://kben-tou.42.fr:81` |
+| **File Browser** | Web-based Volume Management | `http://bn-bn.42.fr:8080` |
+
+
+> [!NOTE]
+> **SSL Certificate:** Since we use a self-signed certificate, you must manually accept the security warning in your browser to proceed to the HTTPS services.
+
+---
+
+## 🔐 4. Security & Credentials
+
+The system strictly separates public configuration from sensitive secrets to ensure maximum security.
+
+#### **A. Public Configuration (`srcs/.env`)**
+These variables define the orchestration environment and are not encrypted:
+
+- `DB_NAME` — database name
+- `DB_USER` — database username
+- `WP_ADMIN` — WordPress admin login
+- `WP_EMAIL` — WordPress admin email
+- `FTP_USER` — FTP login username
+
+#### **B. Secure Secrets (`./secrets/`)**
+Passwords are stored in isolated `.txt` files and mounted as **Docker Secrets** to prevent exposure in the environment:
+
+- `**db_root_password.txt**` **MariaDB Root** - Full administrative access to the database.
+- `**db_password.txt**`  **MariaDB User** - Authentication between WordPress and MariaDB.
+- `**wp_password.txt**`  **WP Admin** - Login password for the WordPress administrator account.
+- `**ftp_password.txt**`  **FTP User** - Password for the secure vsftpd file server.
+
+## 🔐 4. Security & Credentials
+
+### Status Verification
+Check the health and uptime of all microservices:
+
+```bash
+docker ps
+```

@@ -1,5 +1,5 @@
 
-CMD		= docker compose -f srcs/docker-compose.yml --env-file srcs/.env
+CMD		= docker compose -f srcs/docker-compose.yml
 GRN     = \033[1;32m
 YEL     = \033[1;33m
 RED     = \033[1;31m
