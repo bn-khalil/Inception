@@ -24,6 +24,21 @@ To build images and initialize the stack in detached mode:
 ```bash
 make build
 ```
+(Note: `make` all or simply make will also trigger this process.)
+
+### 🔄 Lifecycle Management
+To manage the state of the containers without removing them:
+* Start services:
+
+```bash
+make start
+```
+
+* Stop services:
+
+```bash
+make make stop
+```
 
 ### 🛑 Termination
 To stop all services and remove active containers while preserving data:

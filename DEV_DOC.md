@@ -82,7 +82,7 @@ docker volume inspect <volume_name>
 
 ## 💾 4. Data Storage & Persistence
 
-Data persistence is handled via **Bind Mounts**, ensuring that information survives container destruction and is easily accessible for backups on the host.
+Data persistence is handled via **Volumes**, ensuring that information survives container destruction and is easily accessible for backups on the host.
 
 ### Persistence Logic
 | Service | Data Type | Host Path |

@@ -86,3 +86,4 @@ Host network shares the host IP directly with zero isolation. Bridge network cre
 AI used for:
 * **Debugging:** NGINX configuration errors and FastCGI protocol mismatches.
 * **Review:** To review the Dockerfile optimization strategies and ensure compliance with best practices.
+* **Documentation** To structure and write the project's README for a clear, professional presentation of the infrastructure.
