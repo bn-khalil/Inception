@@ -4,7 +4,7 @@ RUN apt-get update \
     && apt-get -y install \
     redis-server
 
-COPY tools/redis.conf /etc/redis/redis.conf
+COPY conf/redis.conf /etc/redis/redis.conf
 
 EXPOSE 6379
 

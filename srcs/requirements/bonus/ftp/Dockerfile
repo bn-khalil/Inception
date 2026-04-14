@@ -4,7 +4,7 @@ RUN apt-get update \
     && apt-get -y install \
     vsftpd
 
-COPY tools/ftp.conf /etc/vsftpd.conf
+COPY conf/ftp.conf /etc/vsftpd.conf
 
 COPY tools/initializer.sh /usr/local/bin/ftp-init.sh
 

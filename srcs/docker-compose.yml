@@ -111,8 +111,6 @@ services:
         build: requirements/bonus/cadvisor
         image: cadvisor
         restart: on-failure
-        environment:
-            - DOCKER_API_VERSION=1.44
         volumes:
             - /:/rootfs:ro
             - /var/run:/var/run:ro
@@ -121,13 +119,13 @@ services:
             - /sys:/sys:ro
             - /var/lib/docker/:/var/lib/docker:ro
             - /dev/disk/:/dev/disk:ro
-        devices:
-            - /dev/kmsg:/dev/kmsg
         networks:
             - BNet
 
     ftp:
         container_name: ftp
+        depends_on:
+            - wordpress
         image: ftp
         build: requirements/bonus/ftp
         networks:
