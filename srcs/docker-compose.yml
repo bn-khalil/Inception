@@ -18,13 +18,13 @@ volumes:
         driver_opts:
             type: none
             o: bind
-            device: /home/bn-bn/data/db
+            device: /home/kben-tou/data/db
     wordpress_vol:
         driver: local
         driver_opts:
             type: none
             o: bind
-            device: /home/bn-bn/data/wordpress
+            device: /home/kben-tou/data/wordpress
 
 services:
 
@@ -111,12 +111,18 @@ services:
         build: requirements/bonus/cadvisor
         image: cadvisor
         restart: on-failure
+        environment:
+            - DOCKER_API_VERSION=1.44
         volumes:
             - /:/rootfs:ro
             - /var/run:/var/run:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /sys/fs/cgroup:/sys/fs/cgroup:ro
             - /sys:/sys:ro
             - /var/lib/docker/:/var/lib/docker:ro
             - /dev/disk/:/dev/disk:ro
+        devices:
+            - /dev/kmsg:/dev/kmsg
         networks:
             - BNet
 

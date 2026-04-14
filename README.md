@@ -11,7 +11,7 @@ The architecture is built as a **Microservices Mesh**, where each service is iso
 
 ### 1. Prerequisites
 * Root or sudo privileges to change some settings.
-* Linux environment (Debian/Ubuntu recommended).
+* Linux environment (Debian/Alpine recommended).
 * Docker, Docker Compose, and `make` installed.
 
 ### 2. Domain Setup
@@ -43,28 +43,28 @@ Host network shares the host IP directly with zero isolation. Bridge network cre
 ## 🛠️ Detailed Service Breakdown
 
 ### 🛡️ NGINX
-    Acts as the **TLS Termination Proxy**. It handles HTTPS requests (Port 443), enforces SSL/TLS protocols, and forwards dynamic requests to PHP-FPM via the **FastCGI** protocol.
+Acts as the **TLS Termination Proxy**. It handles HTTPS requests (Port 443), enforces SSL/TLS protocols, and forwards dynamic requests to PHP-FPM via the **FastCGI** protocol.
 
 ### 🐘 WordPress & PHP-FPM
-    The dynamic core. We use **PHP-FPM** as a standalone service for better process management. It processes WordPress logic and communicates with MariaDB for data retrieval.
+The dynamic core. We use **PHP-FPM** as a standalone service for better process management. It processes WordPress logic and communicates with MariaDB for data retrieval.
 
 ### 🗄️ MariaDB
-    The **Relational Database**. It ensures data integrity and is strictly isolated, accepting connections only from within the private bridge network.
+The **Relational Database**. It ensures data integrity and is strictly isolated, accepting connections only from within the private bridge network.
 
 ### ⚡ Redis (Bonus)
-    A high-performance **In-memory data store** used as an **Object Cache** to reduce database queries and improve response times significantly.
+A high-performance **In-memory data store** used as an **Object Cache** to reduce database queries and improve response times significantly.
 
 ### 📁 vsftpd (Bonus)
-    A **Secure FTP Server** providing a dedicated gateway for secure file management (themes/plugins) without needing direct shell access to the host.
+A **Secure FTP Server** providing a dedicated gateway for secure file management (themes/plugins) without needing direct shell access to the host.
 
 ### 🔍 Adminer (Bonus)
-    A **Minimalist Database Management tool**. It provides a full GUI to manage MariaDB tables via a single-file PHP script, keeping the container footprint minimal.
+A **Minimalist Database Management tool**. It provides a full GUI to manage MariaDB tables via a single-file PHP script, keeping the container footprint minimal.
 
 ### 🖥️ Static Website (Bonus)
-    A **Centralized Landing Page** that serves as the entry point for your infrastructure. it provides a clean UI with direct links to all your services (WordPress, Adminer), improving user experience and service discovery.
+A **Centralized Landing Page** that serves as the entry point for your infrastructure. it provides a clean UI with direct links to all your services (WordPress, Adminer), improving user experience and service discovery.
 
 ### 📁 File Browser (Bonus)
-    A **Web-based File Manager** that allows you to manage your Docker volumes directly from the browser. It provides an easy way to upload, download, or edit WordPress files and database backups without using the terminal.
+A **Web-based File Manager** that allows you to manage your Docker volumes directly from the browser. It provides an easy way to upload, download, or edit WordPress files and database backups without using the terminal.
 
 ## 📚 Resources
 

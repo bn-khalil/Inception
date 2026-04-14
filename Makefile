@@ -10,7 +10,7 @@ all: build
 
 build:
 	@echo "$(YEL)Building Volumes...$(RST)"
-	@mkdir -p /home/bn-bn/data/db /home/bn-bn/data/wordpress
+	@mkdir -p /home/kben-tou/data/db /home/kben-tou/data/wordpress
 	@echo "$(YEL)Building Images...$(RST)"
 	@$(CMD) up --build -d
 
@@ -32,7 +32,7 @@ clean: down
 
 fclean: clean
 	@echo "$(RED)Cleaning Data volumes...$(RST)"
-	@sudo rm -rf /home/bn-bn/data
+	@sudo rm -rf /home/kben-tou/data
 	@$(CMD) down -v
 
 re: fclean all

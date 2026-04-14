@@ -58,11 +58,11 @@ The infrastructure exposes services through a secure gateway. Use the following 
 
 | Service | Role | Access Point |
 | :--- | :--- | :--- |
-| **WordPress** | Main CMS Public Site | `https://bn-bn.42.fr` |
-| **WP-Admin** | WordPress Administration Panel | `https://bn-bn.42.fr/wp-admin` |
+| **WordPress** | Main CMS Public Site | `https://kben-tou.42.42.fr` |
+| **WP-Admin** | WordPress Administration Panel | `https://kben-tou.42.42.fr/wp-admin` |
 | **Adminer** | Database Management GUI | `http://kben-tou.42.fr:8080` |
 | **static site** | static site with landing page | `http://kben-tou.42.fr:81` |
-| **File Browser** | Web-based Volume Management | `http://bn-bn.42.fr:8080` |
+| **File Browser** | Web-based Volume Management | `http://kben-tou.42.42.fr:8080` |
 
 
 > [!NOTE]

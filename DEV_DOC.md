@@ -87,5 +87,5 @@ Data persistence is handled via **Volumes**, ensuring that information survives 
 ### Persistence Logic
 | Service | Data Type | Host Path |
 | :--- | :--- | :--- |
-| **MariaDB** | SQL Database Files | `/home/bn-bn/data/mariadb` |
-| **WordPress** | Website Files & Media | `/home/bn-bn/data/wordpress` |
+| **MariaDB** | SQL Database Files | `/home/kben-tou/data/db` |
+| **WordPress** | Website Files & Media | `/home/kben-tou/data/wordpress` |
