@@ -27,9 +27,9 @@ if [ ! -d /var/lib/mysql/$DB_NAME ]; then
 
     FLUSH PRIVILEGES;
 
-EOF
+    SHUTDOWN;
 
-    mariadb -u root -p$DB_ROOT_PASSWORD -e "SHUTDOWN;"
+EOF
 
     sleep 5
 

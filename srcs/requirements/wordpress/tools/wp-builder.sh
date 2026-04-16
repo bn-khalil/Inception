@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 if [ ! -f wp-config.php ]; then
 
     WP_PASS=$(cat /run/secrets/wp_password)
@@ -44,5 +43,8 @@ if [ ! -f wp-config.php ]; then
 else
     echo "      <-- WordPress is already configured! -->"
 fi
+
+chown -R www-data:www-data /var/www/wordpress
+chmod -R 775 /var/www/wordpress
 
 /usr/sbin/php-fpm8.2 -F
